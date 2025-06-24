@@ -54,10 +54,16 @@ from sklearn.model_selection import train_test_split
 xtrain,xtest,ytrain,ytest = train_test_split(X,y,test_size=0.20, random_state=2)
 
 from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
+scaler = MinMaxScaler(feature_range=(0, 13))
 X_train_scaled = scaler.fit_transform(xtrain)  # Fit scaler only on training data
 X_test_scaled = scaler.transform(xtest)        # Transform test data using the same scaler
 
+#standardization
+#for col in ['Country', 'Year', 'Schizophrenia', 'Bipolar', 'Eating', 'Anxiety', 'Drug', 'Depressive', 'Alcohol']:
+#    X_train_scaled[col]= (X_train_scaled[col]-X_train_scaled[col].mean())/X_train_scaled[col].std()
+
+print(f"Training set - Min: {X_train_scaled.min():.6f}, Max: {X_train_scaled.max():.6f}")
+print(f"Test set - Min: {X_test_scaled.min():.6f}, Max: {X_test_scaled.max():.6f}")
 
 
 print("xtrain:",xtrain.shape)

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+import pandas as pd
 import joblib
 
 app = Flask(__name__)
@@ -34,9 +35,17 @@ def predict():
         ]
         print(f"Raw inputs: {inputs}")
 
-
-        scaled_input = scaler.transform([inputs])
+        feature_names = ['Country', 'Year', 'Schizophrenia', 'Bipolar', 'Eating', 'Anxiety', 'Drug', 'Depressive', 'Alcohol']
+        input_df = pd.DataFrame([inputs], columns=feature_names)
+        input_df_clipped = input_df.clip(lower=0.0, upper=13.0, axis=1)
+        scaled_input = scaler.transform(input_df_clipped)
+        #scaled_input = scaler.transform([inputs])
         print(f"Scaled inputs: {scaled_input[0]}")
+        print(f"Scaled min: {scaled_input.min()}")
+        print(f"Scaled max: {scaled_input.max()}")
+        #assert scaled_input.min() > 0 and scaled_input.max() < 1, "Input scaling failed!"
+      
+
         prediction = model.predict(scaled_input)[0]
         #prediction = (model.predict([inputs])[0])*10
         prediction_rounded = round(prediction, 2)
@@ -44,13 +53,13 @@ def predict():
 
 
         # Interpretation
-        if prediction_rounded <= 2.0:
+        if prediction_rounded <= 5.0:
             message = "🚨 Poor Mental Health: Immediate support recommended."
-        elif prediction_rounded <= 4.0:
-            message = "⚠️ Moderate Mental Health: Monitor and practice self-care."
-        elif prediction_rounded < 6.0:
-            message = "🔄 Moderate Mental Health: Focus on self-care and monitoring your wellbeing."
-        elif prediction_rounded < 8.0:
+        elif prediction_rounded < 7.0:
+            message = "⚠️ Moderate Mental Health: Focus on self-care and monitoring your wellbeing."
+        #elif prediction_rounded < 6.0:
+        #    message = "🔄 Moderate Mental Health: Focus on self-care and monitoring your wellbeing."
+        elif prediction_rounded < 8.5:
             message = "✅ Good Mental Health: Maintain your healthy lifestyle and habits."
         else:
             message = "🌟 Excellent Mental Health: You're doing great!"
