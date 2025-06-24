@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mental Fitness Prediction</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Mental Fitness Prediction Form</h2>
+    <form action="/predict" method="post">
+        <label>Country:</label><input type="text" name="country"><br>
+        <label>Year:</label><input type="number" name="year"><br>
+        <label>Schizophrenia (%):</label><input type="text" name="schizo"><br>
+        <label>Bipolar Disorder (%):</label><input type="text" name="bipolar"><br>
+        <label>Eating Disorder (%):</label><input type="text" name="eating"><br>
+        <label>Anxiety Disorders (%):</label><input type="text" name="anxiety"><br>
+        <label>Drug Use Disorders (%):</label><input type="text" name="drug"><br>
+        <label>Depressive Disorders (%):</label><input type="text" name="depression"><br>
+        <label>Alcohol Use Disorders (%):</label><input type="text" name="alcohol"><br>
+        <input type="submit" value="Predict">
+    </form>
+</body>
+</html>
