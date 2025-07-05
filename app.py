@@ -37,7 +37,7 @@ def predict():
 
         feature_names = ['Country', 'Year', 'Schizophrenia', 'Bipolar', 'Eating', 'Anxiety', 'Drug', 'Depressive', 'Alcohol']
         input_df = pd.DataFrame([inputs], columns=feature_names)
-        input_df_clipped = input_df.clip(lower=0.0, upper=13.0, axis=1)
+        input_df_clipped = input_df.clip(lower=scaler.data_min_, upper=scaler.data_max_, axis=1)
         scaled_input = scaler.transform(input_df_clipped)
         #scaled_input = scaler.transform([inputs])
         print(f"Scaled inputs: {scaled_input[0]}")

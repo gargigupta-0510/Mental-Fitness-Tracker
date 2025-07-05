@@ -16,7 +16,7 @@ except FileNotFoundError:
 
 #MERGING DATASETS
 data=pd.merge(df1,df2)
-#print(data.head(10))
+
 
 
 #DATA CLEANING
@@ -35,6 +35,7 @@ print(f"Std: {data['MentalFitness'].std()}")
 
 
 
+
 #PREPROCESSING DATA
 #tranfering non-numerical labels to numerical label
 from sklearn.preprocessing import LabelEncoder    #labelencoder is used to normalize labels
@@ -44,32 +45,44 @@ for i in data.columns:
         data[i]=l.fit_transform(data[i])
 print(data.shape)
 
+print("-----describe data before scaled")
+print(data.describe())  #to get the statistical summary of the dataset
+
+
+
+
+#Normalization of data
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+for col in data.columns:
+    data[col]=scaler.fit_transform(data[[col]])  # Fit scaler on each column of training data
+
+print("-------scaled data")
+print(data)
+print("-----describe scaled data")
+print(data.describe())  #to get the statistical summary of the dataset
+
+
+
 
 #SPLITTING DATA
 feature_columns = ['Country', 'Year', 'Schizophrenia', 'Bipolar', 'Eating', 'Anxiety', 'Drug', 'Depressive', 'Alcohol']
 X = data[feature_columns]
 y = data['MentalFitness']
+print(X)
+print(y)
 
 from sklearn.model_selection import train_test_split 
 xtrain,xtest,ytrain,ytest = train_test_split(X,y,test_size=0.20, random_state=2)
-
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler(feature_range=(0, 13))
-X_train_scaled = scaler.fit_transform(xtrain)  # Fit scaler only on training data
-X_test_scaled = scaler.transform(xtest)        # Transform test data using the same scaler
-
-#standardization
-#for col in ['Country', 'Year', 'Schizophrenia', 'Bipolar', 'Eating', 'Anxiety', 'Drug', 'Depressive', 'Alcohol']:
-#    X_train_scaled[col]= (X_train_scaled[col]-X_train_scaled[col].mean())/X_train_scaled[col].std()
-
-print(f"Training set - Min: {X_train_scaled.min():.6f}, Max: {X_train_scaled.max():.6f}")
-print(f"Test set - Min: {X_test_scaled.min():.6f}, Max: {X_test_scaled.max():.6f}")
-
-
+print(xtrain)
+print(xtest)
+print("------describe train")
+print(xtrain.describe())  #to get the statistical summary of the dataset
 print("xtrain:",xtrain.shape)
 print("xtest:",xtest.shape)
 print("ytrain:",ytrain.shape)
 print("ytest:",ytest.shape)
+
 
 
 
@@ -78,11 +91,13 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 rf=RandomForestRegressor(n_estimators=100, random_state=42)
-rf.fit(X_train_scaled,ytrain)         #fit training data
+rf.fit(xtrain,ytrain)         #fit training data
+
+
 
 #model evaluation for training set
-y_train_pred = rf.predict(X_train_scaled)
-y_test_pred = rf.predict(X_test_scaled)
+y_train_pred = rf.predict(xtrain)
+y_test_pred = rf.predict(xtest)
 
 #mean square error is the average of the square of the difference b/w observed n predicted values of a variable
 mse= mean_squared_error(ytrain, y_train_pred)   
@@ -107,6 +122,9 @@ print("Random Forest Regressor Model for test set:")
 print("MSE:", test_mse)
 print("RMSE:", test_rmse)
 print("R2 score:", test_r2)
+
+
+
 
 #SAVING MODEL FOR LATER USE
 import joblib
