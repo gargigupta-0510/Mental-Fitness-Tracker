@@ -3,6 +3,9 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
 import joblib
+import io, base64
+import matplotlib.pyplot as plt
+import shap
 
 app = Flask(__name__)
 
@@ -64,12 +67,38 @@ def predict():
         else:
             message = "🌟 Excellent Mental Health: You're doing great!"
 
-        return render_template('result.html', prediction=prediction_rounded, message=message)
+        #return render_template('result.html', prediction=prediction_rounded, message=message)
 
     except ValueError:
         return "Invalid country name. Please enter a valid country from the dataset."
     except Exception as e:
         return f"Error: {str(e)}"
+    
+
+   # Get feature importance from trained model
+    importances = model.feature_importances_
+    feature_names = ['Country', 'Year', 'Schizophrenia', 'Bipolar', 'Eating', 'Anxiety', 'Drug', 'Depressive', 'Alcohol']
+
+    # Create a bar chart
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.barh(feature_names, importances, color='skyblue')
+    ax.set_title("Feature Importance for Mental Fitness Prediction")
+    ax.set_xlabel("Importance Score")
+    ax.set_ylabel("Features")
+    plt.tight_layout()
+
+    # Convert plot to base64 for HTML display
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png')
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')   
+    plt.close(fig)
+
+    return render_template('result.html',
+                           prediction=prediction_rounded,
+                           message=message,
+                           img_data=img_base64)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
