@@ -5,7 +5,7 @@ import pandas as pd
 import joblib
 import io, base64
 import matplotlib.pyplot as plt
-import shap
+#import shap
 
 app = Flask(__name__)
 
