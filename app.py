@@ -4,15 +4,31 @@ import numpy as np
 import pandas as pd
 import joblib
 import io, base64
+import os
 import matplotlib.pyplot as plt
 #import shap
 
 app = Flask(__name__)
 
-model = joblib.load('mental_fitness_model.pkl')
-country_encoder = joblib.load('country_encoder.pkl')  # Load the saved encoder
-scaler = joblib.load(r'C:\Users\lenovo\OneDrive\Documents\Gargi\python\MentalFitnessTracker\scaler.pkl')  # load saved scaler
-feature_columns = joblib.load(r'C:\Users\lenovo\OneDrive\Documents\Gargi\python\MentalFitnessTracker\feature_columns.pkl')
+#model = joblib.load('mental_fitness_model.pkl')
+#country_encoder = joblib.load('country_encoder.pkl')  # Load the saved encoder
+#scaler = joblib.load(r'C:\Users\lenovo\OneDrive\Documents\Gargi\python\MentalFitnessTracker\scaler.pkl')  # load saved scaler
+#feature_columns = joblib.load(r'C:\Users\lenovo\OneDrive\Documents\Gargi\python\MentalFitnessTracker\feature_columns.pkl')
+
+# Get base directory of project
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Paths to model files
+scaler_path = os.path.join(BASE_DIR, "scaler.pkl")
+feature_columns_path = os.path.join(BASE_DIR, "feature_columns.pkl")
+model_path = os.path.join(BASE_DIR, "mental_fitness_model.pkl") 
+encoder_path = os.path.join(BASE_DIR, "country_encoder.pkl")  
+
+# Load files
+scaler = joblib.load(open(scaler_path, "rb"))
+feature_columns = joblib.load(feature_columns_path)
+model = joblib.load(model_path)
+country_encoder = joblib.load(encoder_path)
 
 @app.route('/')
 def home():
